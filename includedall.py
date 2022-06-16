@@ -192,5 +192,23 @@ class expand_dataset(macro_data):
         super().__init__()
 
     def create_original_dataset(self):
-        self.original_dataset = pd.read_csv()
+        original_dataset = pd.read_csv("C:/Users/assegnista/new_progress_filled.csv")
+        issuedate_original = pd.read_csv("C:/Users/assegnista/loans_with_id.csv", usecols=["id", "issue_d"])
+        issuedate_original["issue_d"] = pd.to_datetime(issuedate_original["issue_d"])
+        issuedate_original['month'] = pd.DatetimeIndex(issuedate_original['issue_d']).month
+        issuedate_original['year'] = pd.DatetimeIndex(issuedate_original['issue_d']).year
+        self.data = pd.merge(original_dataset,issuedate_original,on='id')
+        return self.data
+
+    def find_lagged_variables(self, dataframe):
+        dataframe["month"] = dataframe.index.month.astype(str)  #how about annual factors
+        dataframe["year"] = dataframe.index.year.astype(str)
+        dataframe["mon_year"] = dataframe.year.str.cat(dataframe.month)
+        self.melted_df = pd.melt(dataframe, id_vars=["mon_year"], value_vars=dataframe.columns[0:51])
+        return self.melted_df
+
+    def add_lagged_variables_to_dataset(self):
+
+
+
 
