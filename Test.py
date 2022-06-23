@@ -1,16 +1,21 @@
-from includedall import macro_data, expand_dataset
+import pandas as pd
+
+from Macroeconomic_methods import macro_data, expand_dataset
 
 if __name__ == "__main__":
-    #my_eco_class = macro_data()
-    #x = my_eco_class.download_consumer_sentiment_index_umich()
+    pd.set_option("display.max_columns", 10000)
+
+    my_eco_class = macro_data()
+    cpi = my_eco_class.download_cpi()
     #x_df = my_eco_class.create_dataframe(x)
     #transposed_x = my_eco_class.prepare_dataframe()
-    ex_class = expand_dataset()
+    #ex_class = expand_dataset()
+    #x = ex_class.download_cpi()
     #data = ex_class.create_original_dataset()
-    #melted = ex_class.find_lagged_variables(ex_class.download_unemployment_rate())
-    new_data = ex_class.add_macro_variables_to_dataset(ex_class.create_original_dataset(), ex_class.find_lagged_variables(ex_class.download_house_price_index()))
+    #melted = ex_class.find_lagged_variables(ex_class.download_annual_income())
+    #melted_snap = ex_class.find_lagged_variables(ex_class.download_snap_benefits_recipients())
+
+    #expanded_datasett = ex_class.add_macro_variables_to_dataset(data, melted_snap)
     #print(data)
-    print(new_data)
-    #print(transposed_x)
-    #print(x)
+    print(cpi)
 

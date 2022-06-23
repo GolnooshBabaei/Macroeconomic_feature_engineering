@@ -27,7 +27,6 @@ class macro_data:
             regional_cpi.append(self.fred.get_series(i))
 
         regional_cpi = pd.concat(regional_cpi, axis=1, ignore_index=True)
-        #regional_cpi = pd.DataFrame(regional_cpi)
         regional_cpi.columns = ["NORTHEAST", "WEST", "MIDWEST","SOUTH"]
         regional_cpi["month"] = regional_cpi.index.month.astype(str)
         regional_cpi["year"] = regional_cpi.index.year.astype(str)
@@ -45,7 +44,6 @@ class macro_data:
             ur_list.append(self.fred.get_series(tag))
 
         ur_list = pd.concat(ur_list, axis=1, ignore_index=True)
-        #ur_list = pd.DataFrame(ur_list)
         ur_list.columns = self.states_abb_loaded
         ur_list["month"] = ur_list.index.month.astype(str)
         ur_list["year"] = ur_list.index.year.astype(str)
@@ -246,6 +244,7 @@ class expand_dataset(macro_data):
         #dataframe["year"] = dataframe.index.year.astype(str)
         #dataframe["date"] = dataframe.year.str.cat(dataframe.month)
 
+
         self.melted_df = pd.melt(dataframe, id_vars=["date"], value_vars=dataframe.drop(["month", "year", "date"], axis=1).columns).rename(columns={"variable": "addr_state"})
 
         self.melted_df['shifted_1'] = self.melted_df.groupby('addr_state')['value'].shift(1)
@@ -254,11 +253,19 @@ class expand_dataset(macro_data):
         self.melted_df['shifted_4'] = self.melted_df.groupby('addr_state')['value'].shift(4)
         self.melted_df['shifted_5'] = self.melted_df.groupby('addr_state')['value'].shift(5)
         self.melted_df['shifted_6'] = self.melted_df.groupby('addr_state')['value'].shift(6)
+
+        self.melted_df["year"] = self.melted_df["date"].apply(lambda x: x[:-1])
         return self.melted_df
 
-    def add_macro_variables_to_dataset(self, data, melted_df):
-        dataset_with_macro_factors = pd.merge(data, melted_df, on=["date", "addr_state"], how="left")
+    def add_macro_variables_to_dataset(self, data, melted_df, on_cols= ["date", "addr_state"]):
 
+        dataset_with_macro_factors = pd.merge(data, melted_df, on= on_cols, how="left")
+        # unemployment worked
+        # annual income showed 1968876 null values
+        # homeownership showed 1968876 null values
+        # house price index showed 1423281 null values
+        # cpi showed 2156619 null values (for all rows)
+        #
         return dataset_with_macro_factors
 
 
