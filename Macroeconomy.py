@@ -22,12 +22,13 @@ class macro_data:
         Frequency: Monthly
         """
         s = ["CUUR0100SA0", "CUUR0400SA0", "CUUR0200SA0", "CUUR0300SA0"]  # NORTHEAST, WEST, MIDWEST, AND SOUTH
+
         regional_cpi = []
         for i in tqdm.tqdm(s):
             regional_cpi.append(self.fred.get_series(i))
 
         regional_cpi = pd.concat(regional_cpi, axis=1, ignore_index=True)
-        regional_cpi.columns = ["NORTHEAST", "WEST", "MIDWEST","SOUTH"]
+        regional_cpi.columns = ["Northeast", "West", "Midwest","South"]
         regional_cpi["month"] = regional_cpi.index.month.astype(str)
         regional_cpi["year"] = regional_cpi.index.year.astype(str)
         regional_cpi["date"] = regional_cpi.year.str.cat(regional_cpi.month)
@@ -226,17 +227,18 @@ class expand_dataset(macro_data):
     def create_original_dataset(self):
         original_dataset = pd.read_csv("C:/Users/assegnista/new_progress_filled.csv")
         issuedate_original = pd.read_csv("C:/Users/assegnista/loans_with_id.csv", usecols=["id", "issue_d"])
+        state_region = pd.read_csv("C:/Users/assegnista/Documents/GitHub/census-regions/us_census_bureau_regions_and_divisions.csv")
+        states_dic = dict(zip(state_region['State Code'], state_region['Region']))
+
         issuedate_original["issue_d"] = pd.to_datetime(issuedate_original["issue_d"])
         self.data = pd.merge(original_dataset,issuedate_original, on='id')
         self.data['month'] = pd.DatetimeIndex(self.data['issue_d']).month.astype(str)
         self.data['year'] = pd.DatetimeIndex(self.data['issue_d']).year.astype(str)
         self.data["date"] = self.data.year.str.cat(self.data.month)
+        self.data["regions"] = self.data["addr_state"].replace(states_dic)
         return self.data
 
-    def find_lagged_variables(self, dataframe):
-        #dataframe["month"] = dataframe.index.month.astype(str)
-        #dataframe["year"] = dataframe.index.year.astype(str)
-        #dataframe["date"] = dataframe.year.str.cat(dataframe.month)
+    def find_lagged_variables_statebased(self, dataframe):
         list1 = list(self.data["date"])
         list2 = list(dataframe["date"])
 
@@ -255,12 +257,42 @@ class expand_dataset(macro_data):
         dataframe = pd.concat([dataframe, to_add])
 
         self.melted_df = pd.melt(dataframe, id_vars=["date"], value_vars=dataframe.drop(["month", "year", "date"], axis=1).columns).rename(columns={"variable": "addr_state"})
+
         self.melted_df['shifted_1'] = self.melted_df.groupby('addr_state')['value'].shift(1)
         self.melted_df['shifted_2'] = self.melted_df.groupby('addr_state')['value'].shift(2)
         self.melted_df['shifted_3'] = self.melted_df.groupby('addr_state')['value'].shift(3)
         self.melted_df['shifted_4'] = self.melted_df.groupby('addr_state')['value'].shift(4)
         self.melted_df['shifted_5'] = self.melted_df.groupby('addr_state')['value'].shift(5)
         self.melted_df['shifted_6'] = self.melted_df.groupby('addr_state')['value'].shift(6)
+        self.melted_df["date"] = self.melted_df["date"].astype(str)
+        self.melted_df["year"] = self.melted_df["date"].apply(lambda x: x[0:4])
+        return self.melted_df
+
+    def find_lagged_variables_regionbased(self, dataframe):
+        list1 = list(self.data["date"])
+        list2 = list(dataframe["date"])
+
+        list_difference = []
+        for item in list1:
+            if item not in list2:
+                if item not in list_difference:
+                    list_difference.append(item)
+
+        for i in range(0, len(list_difference)):
+            list_difference[i] = int(list_difference[i])
+        list_difference = sorted(list_difference, reverse=False)
+
+        to_add = pd.DataFrame(np.zeros((len(list_difference), dataframe.shape[1])), columns=dataframe.columns)
+        to_add["date"] = list_difference
+        dataframe = pd.concat([dataframe, to_add])
+
+        self.melted_df = pd.melt(dataframe, id_vars=["date"], value_vars=dataframe.drop(["month", "year", "date"], axis=1).columns).rename(columns={"variable": "regions"})
+        self.melted_df['shifted_1'] = self.melted_df.groupby('regions')['value'].shift(1)
+        self.melted_df['shifted_2'] = self.melted_df.groupby('regions')['value'].shift(2)
+        self.melted_df['shifted_3'] = self.melted_df.groupby('regions')['value'].shift(3)
+        self.melted_df['shifted_4'] = self.melted_df.groupby('regions')['value'].shift(4)
+        self.melted_df['shifted_5'] = self.melted_df.groupby('regions')['value'].shift(5)
+        self.melted_df['shifted_6'] = self.melted_df.groupby('regions')['value'].shift(6)
 
         self.melted_df["date"] = self.melted_df["date"].astype(str)
         self.melted_df["year"] = self.melted_df["date"].apply(lambda x: x[0:4])
