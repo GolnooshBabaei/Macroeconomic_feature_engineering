@@ -28,8 +28,9 @@ class macro_data:
         regional_cpi = pd.concat(regional_cpi, axis=1, ignore_index=True)
         regional_cpi.columns = ["Northeast", "West", "Midwest", "South"]
         regional_cpi["month"] = regional_cpi.index.month.astype(str)
+        regional_cpi["month"] = regional_cpi["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         regional_cpi["year"] = regional_cpi.index.year.astype(str)
-        regional_cpi["date"] = regional_cpi.year.str.cat(regional_cpi.month)
+        regional_cpi["year_month"] = regional_cpi.year.str.cat(regional_cpi.month)
         return regional_cpi
 
     def download_unemployment_rate(self):
@@ -45,8 +46,9 @@ class macro_data:
         ur_list = pd.concat(ur_list, axis=1, ignore_index=True)
         ur_list.columns = self.states_abb_loaded
         ur_list["month"] = ur_list.index.month.astype(str)
+        ur_list["month"] = ur_list["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         ur_list["year"] = ur_list.index.year.astype(str)
-        ur_list["date"] = ur_list.year.str.cat(ur_list.month)
+        ur_list["year_month"] = ur_list.year.str.cat(ur_list.month)
         return ur_list
 
     def download_annual_income(self):
@@ -68,8 +70,9 @@ class macro_data:
         income_list = pd.concat(income_list, axis=1, ignore_index=True)
         income_list.columns = self.states_abb_loaded
         income_list["month"] = income_list.index.month.astype(str)
+        income_list["month"] = income_list["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         income_list["year"] = income_list.index.year.astype(str)
-        income_list["date"] = income_list.year.str.cat(income_list.month)
+        income_list["year_month"] = income_list.year.str.cat(income_list.month)
         return income_list
 
     def download_home_ownership_rate(self):
@@ -87,8 +90,9 @@ class macro_data:
         hown_list = pd.concat(hown_list, axis=1, ignore_index=True)
         hown_list.columns = self.states_abb_loaded
         hown_list["month"] = hown_list.index.month.astype(str)
+        hown_list["month"] = hown_list["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         hown_list["year"] = hown_list.index.year.astype(str)
-        hown_list["date"] = hown_list.year.str.cat(hown_list.month)
+        hown_list["year_month"] = hown_list.year.str.cat(hown_list.month)
         return hown_list
 
     def download_resident_pop(self):
@@ -105,8 +109,10 @@ class macro_data:
         resident_pop_list = pd.concat(resident_pop_list, axis=1, ignore_index=True)
         resident_pop_list.columns = self.states_abb_loaded
         resident_pop_list["month"] = resident_pop_list.index.month.astype(str)
+        resident_pop_list["month"] = resident_pop_list["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
         resident_pop_list["year"] = resident_pop_list.index.year.astype(str)
-        resident_pop_list["date"] = resident_pop_list.year.str.cat(resident_pop_list.month)
+        resident_pop_list["year_month"] = resident_pop_list.year.str.cat(resident_pop_list.month)
         return resident_pop_list
 
     def download_snap_benefits_recipients(self):
@@ -129,8 +135,10 @@ class macro_data:
         snap_benefits_recipients_list = pd.concat(snap_benefits_recipients_list, axis=1, ignore_index=True)
         snap_benefits_recipients_list.columns = self.states_abb_loaded
         snap_benefits_recipients_list["month"] = snap_benefits_recipients_list.index.month.astype(str)
+        snap_benefits_recipients_list["month"] = snap_benefits_recipients_list["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
         snap_benefits_recipients_list["year"] = snap_benefits_recipients_list.index.year.astype(str)
-        snap_benefits_recipients_list["date"] = snap_benefits_recipients_list.year.str.cat(
+        snap_benefits_recipients_list["year_month"] = snap_benefits_recipients_list.year.str.cat(
             snap_benefits_recipients_list.month)
         return snap_benefits_recipients_list
 
@@ -147,8 +155,10 @@ class macro_data:
         house_price_index_list = pd.concat(house_price_index_list, axis=1, ignore_index=True)
         house_price_index_list.columns = self.states_abb_loaded
         house_price_index_list["month"] = house_price_index_list.index.month.astype(str)
+        house_price_index_list["month"] = house_price_index_list["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
         house_price_index_list["year"] = house_price_index_list.index.year.astype(str)
-        house_price_index_list["date"] = house_price_index_list.year.str.cat(house_price_index_list.month)
+        house_price_index_list["year_month"] = house_price_index_list.year.str.cat(house_price_index_list.month)
         return house_price_index_list
 
     def download_estimatedpercentofpeople_in_poverty(self):
@@ -169,13 +179,16 @@ class macro_data:
                 estimatedpercentofpeople_in_poverty_list.append(
                     self.fred.get_series(s))
 
-        estimatedpercentofpeople_in_poverty_list = pd.concat(estimatedpercentofpeople_in_poverty_list, axis=1, ignore_index=True)
+        estimatedpercentofpeople_in_poverty_list = pd.concat(estimatedpercentofpeople_in_poverty_list, axis=1,
+                                                             ignore_index=True)
         estimatedpercentofpeople_in_poverty_list.columns = self.states_abb_loaded
         estimatedpercentofpeople_in_poverty_list["month"] = estimatedpercentofpeople_in_poverty_list.index.month.astype(
             str)
+        estimatedpercentofpeople_in_poverty_list["month"] = estimatedpercentofpeople_in_poverty_list["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
         estimatedpercentofpeople_in_poverty_list["year"] = estimatedpercentofpeople_in_poverty_list.index.year.astype(
             str)
-        estimatedpercentofpeople_in_poverty_list["date"] = estimatedpercentofpeople_in_poverty_list.year.str.cat(
+        estimatedpercentofpeople_in_poverty_list["year_month"] = estimatedpercentofpeople_in_poverty_list.year.str.cat(
             estimatedpercentofpeople_in_poverty_list.month)
         return estimatedpercentofpeople_in_poverty_list
 
@@ -187,8 +200,10 @@ class macro_data:
         consumer_sentiment_index_umich = self.fred.get_series("UMCSENT")
         consumer_sentiment_index_umich = pd.DataFrame(consumer_sentiment_index_umich)
         consumer_sentiment_index_umich["month"] = consumer_sentiment_index_umich.index.month.astype(str)
+        consumer_sentiment_index_umich["month"] = consumer_sentiment_index_umich["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
         consumer_sentiment_index_umich["year"] = consumer_sentiment_index_umich.index.year.astype(str)
-        consumer_sentiment_index_umich["date"] = consumer_sentiment_index_umich.year.str.cat(
+        consumer_sentiment_index_umich["year_month"] = consumer_sentiment_index_umich.year.str.cat(
             consumer_sentiment_index_umich.month)
         return consumer_sentiment_index_umich
 
@@ -200,9 +215,11 @@ class macro_data:
         """
         nber_recession_indicator = self.fred.get_series("USREC")
         nber_recession_indicator = pd.DataFrame(nber_recession_indicator)
-        # nber_recession_indicator["month"] = nber_recession_indicator.index.month.astype(str)
-        # nber_recession_indicator["year"] = nber_recession_indicator.index.year.astype(str)
-        # nber_recession_indicator["date"] = nber_recession_indicator.year.str.cat(nber_recession_indicator.month)
+        nber_recession_indicator["month"] = nber_recession_indicator.index.month.astype(str)
+        nber_recession_indicator["month"] = nber_recession_indicator["month"].apply(
+            lambda month: "0" + month if len(month) == 1 else month)
+        nber_recession_indicator["year"] = nber_recession_indicator.index.year.astype(str)
+        nber_recession_indicator["year_month"] = nber_recession_indicator.year.str.cat(nber_recession_indicator.month)
         return nber_recession_indicator
 
     def download_sp500(self):
@@ -215,9 +232,29 @@ class macro_data:
         sp500 = self.fred.get_series("SP500")
         sp500 = pd.DataFrame(sp500)
         sp500["month"] = sp500.index.month.astype(str)
+        sp500["month"] = sp500["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         sp500["year"] = sp500.index.year.astype(str)
-        sp500["date"] = sp500.year.str.cat(sp500.month)
+        sp500["year_month"] = sp500.year.str.cat(sp500.month)
         return sp500
+
+    def download_GDP(self):
+        """
+           Unit: Billions of Dollars
+           Not Seasonally Adjusted
+           Frequency: Annual
+           """
+        GDP = []
+        for i in tqdm.tqdm(self.states_abb_loaded):
+            tag = i + "NGSP"
+            GDP.append(self.fred.get_series(tag))
+
+        GDP = pd.concat(GDP, axis=1, ignore_index=True)
+        GDP.columns = self.states_abb_loaded
+        GDP["month"] = GDP.index.month.astype(str)
+        GDP["month"] = GDP["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
+        GDP["year"] = GDP.index.year.astype(str)
+        GDP["year_month"] = GDP.year.str.cat(GDP.month)
+        return GDP
 
 
 class expand_dataset(macro_data):
@@ -228,22 +265,25 @@ class expand_dataset(macro_data):
         self.melted_df = None
 
     def create_original_dataset(self):
-        original_dataset = pd.read_csv("C:/Users/assegnista/new_progress_filled.csv")
+        original_dataset = pd.read_csv("C:/Users/assegnista/Downloads/new_progress_filled.csv")
         issuedate_original = pd.read_csv("C:/Users/assegnista/loans_with_id.csv", usecols=["id", "issue_d"])
-        state_region = pd.read_csv("C:/Users/assegnista/Documents/GitHub/census-regions/us_census_bureau_regions_and_divisions.csv")
+        state_region = pd.read_csv(
+            "C:/Users/assegnista/Documents/GitHub/census-regions/us_census_bureau_regions_and_divisions.csv")
         states_dic = dict(zip(state_region['State Code'], state_region['Region']))
         issuedate_original["issue_d"] = pd.to_datetime(issuedate_original["issue_d"])
         self.data = pd.merge(original_dataset, issuedate_original, on='id')
         self.data['month'] = pd.DatetimeIndex(self.data['issue_d']).month.astype(str)
+        self.data["month"] = self.data["month"].apply(lambda month: "0" + month if len(month) == 1 else month)
         self.data['year'] = pd.DatetimeIndex(self.data['issue_d']).year.astype(str)
-        self.data["date"] = self.data.year.str.cat(self.data.month)
+        self.data["year_month"] = self.data.year.str.cat(self.data.month)
         self.data["regions"] = self.data["addr_state"].replace(states_dic)
-        self.data["date"] = self.data["date"].astype(int)
-        self.data.sort_values(by="date", inplace=True)
 
         return self.data
 
-    def find_lagged_variables(self, dataframe, settings=["date", "addr_state"]):
+    def find_lagged_variables(self, dataframe, settings=["year_month", "addr_state"]):
+        # dataframe["month"] = dataframe.index.month.astype(str)
+        # dataframe["year"] = dataframe.index.year.astype(str)
+        # dataframe["date"] = dataframe.year.str.cat(dataframe.month)
         list1 = list(self.data[settings[0]])
         list2 = list(dataframe[settings[0]])
 
@@ -255,17 +295,19 @@ class expand_dataset(macro_data):
 
         for i in range(0, len(list_difference)):
             list_difference[i] = int(list_difference[i])
+        list_difference = sorted(list_difference, reverse=False)
 
         to_add = pd.DataFrame(np.zeros((len(list_difference), dataframe.shape[1])), columns=dataframe.columns)
         to_add[settings[0]] = list_difference
+        to_add.apply(np.nan if to_add==0)
         dataframe = pd.concat([dataframe, to_add])
 
         dataframe[settings[0]] = (dataframe[settings[0]]).astype(int)
-        dataframe.sort_values(by=settings[0], inplace=True)
-        dataframe.reset_index(inplace=True, drop=True)
+        dataframe.sort_values(by=["year", "month"], inplace=True)
 
         self.melted_df = pd.melt(dataframe, id_vars=[settings[0]],
-                            value_vars=dataframe.drop(["month", "year", "date"], axis=1).columns).rename(columns={"variable": settings[1]})
+                                 value_vars=dataframe.drop(["month", "year", "year_month"], axis=1).columns).rename(
+            columns={"variable": settings[1]})
 
         self.melted_df['shifted_1'] = self.melted_df.groupby(settings[1])['value'].shift(1)
         self.melted_df['shifted_2'] = self.melted_df.groupby(settings[1])['value'].shift(2)
@@ -274,10 +316,11 @@ class expand_dataset(macro_data):
         self.melted_df['shifted_5'] = self.melted_df.groupby(settings[1])['value'].shift(5)
         self.melted_df['shifted_6'] = self.melted_df.groupby(settings[1])['value'].shift(6)
 
+        self.melted_df[settings[0]] = self.melted_df[settings[0]].astype(str)
+
         return self.melted_df
 
-
-    def add_macro_variables_to_dataset(self, data, melted_df, on_cols=["date", "addr_state"]):
+    def add_macro_variables_to_dataset(self, data, melted_df, on_cols=["year_month", "addr_state"]):
 
         dataset_with_macro_factors = pd.merge(data, melted_df, on=on_cols, how="left")
 
